@@ -1,0 +1,873 @@
+The below walkthrough will help explain how the dunnet game reacts to player
+commands. The first part of this file illustrates some basic commands: e, w, l,
+x, i, get, and drop. It is important to understand how these commands work,
+because you will implement them over the next few homework assignments.
+
+As you read the text below, you will find that, after covering these basic
+commands, it goes on to use the restore command to move the game forward to
+the part that we will be implementing. Once you reach that point in the reading
+below, you may wish to use that savedgame and play the game some for yourself.
+After all, you already have the game if you have emacs, and it can be a good
+way to get a sense of your homework assignment. That being said, you don't need
+to play the game in order to do the assignment, because I show all the expected
+output, in this file that you are reading right now. 
+
+To run the dunnet game, type:
+
+    % emacs -batch -l dunnet
+
+    Dead end
+    You are at a dead end of a dirt road.  The road goes to the east.
+    In the distance you can see that it will eventually fork off.  The
+    trees here are very tall royal palms, and they are spaced equidistant
+    from each other.
+    There is a shovel here.
+    >
+
+From the above, we see that we are at the end of a road. There is also a shovel
+here. We have also been told that the road goes east. This means that we can
+follow the road, by typing "e". Let's try that:
+
+    >e
+    E/W Dirt road
+    You are on the continuation of a dirt road.  There are more trees on
+    both sides of you.  The road continues to the east and west.
+    There is a large boulder here.
+    >
+
+From the above, we see that we can keep going east, or we can go back west.
+Let's go back west:
+
+    > w
+    Dead end
+    There is a shovel here.
+    > l
+    Dead end
+    You are at a dead end of a dirt road.  The road goes to the east.
+    In the distance you can see that it will eventually fork off.  The
+    trees here are very tall royal palms, and they are spaced equidistant
+    from each other.
+    There is a shovel here.
+    >
+
+Looking at the above text, we find that the description of the place is much
+shorter if you have already visited it. But the above also shows that we can
+see the full text by typing "l" (which means "look").
+
+Now let's see how we can interact with the objects in this location. There was
+a message above telling us about a shovel. It also said that there were palm
+trees and a road. Let's examine these objects, by typing "x":
+
+    >x shovel
+    It is a normal shovel with a price tag attached that says $19.99.
+    >x tree
+    They are palm trees with a bountiful supply of coconuts in them.
+    >x road
+    I don't know what that is.
+    >
+    
+From the above, we see that not every object mentioned in the description is
+actual an object in the game (ie, the game doesn't understand "road".)
+
+The next topic to discuss is our inventory of carried items. We can look at 
+it (using "i") and we can pick things up and put them in our inventory (using
+"get"), or drop them (using "drop"):
+
+    >i
+    You currently have:
+    A lamp
+    >get tree
+    You cannot take that.
+    >get shovel
+    Taken.
+    >get shovel
+    I do not see that here.
+    >i
+    You currently have:
+    A lamp
+    A shovel
+    >drop lamp
+    Done.
+    >i
+    You currently have:
+    A shovel
+    >
+
+From the above, we see that we start the game carrying a lamp. We also see that
+some items can be picked up (such as the shovel), but other items cannot be
+taken (such as the tree).
+If we picked up the shovel, then it should not be on the ground. And if we
+dropped the lamp, then it should be on the ground instead. Let's see:
+
+    >l
+    Dead end
+    You are at a dead end of a dirt road.  The road goes to the east.
+    In the distance you can see that it will eventually fork off.  The
+    trees here are very tall royal palms, and they are spaced equidistant
+    from each other.
+    There is a lamp nearby.
+    >
+
+Correct. The shovel is no longer there, but the lamp is. Let's move around
+some and see how things display:
+
+    >e
+    E/W Dirt road
+    There is a large boulder here.
+    >w
+    Dead end
+    There is a lamp nearby.
+    >
+
+From the above, we see that the game remembers locations that you have already
+visited. Instead of giving a long description when you enter these locations,
+it just gives the name of the room. But we also see that it still will display
+the objects that are present (ie, the boulder, shovel, or lamp). But remember
+that there was also a tree object, and that one doesn't display. So objects
+that give messages every time you enter the room are a subset of the total
+objects in the game. And the objects that can be picked up are also a subset
+of all objects (eg, the shovel and lamp can be picked up, but the tree and the
+boulder cannot be picked up).
+
+Note that, even though only the short description is given when re-entering a
+place, the long description can still be seen by typing 'l':
+
+    >e
+    E/W Dirt road
+    There is a large boulder here.
+    >l
+    E/W Dirt road
+    You are on the continuation of a dirt road.  There are more trees on
+    both sides of you.  The road continues to the east and west.
+    There is a large boulder here.
+    >
+
+Now that we know the game mechanics, let's start thinking about our programming
+assignment. This year we will be implementing the second level of the game. So
+we will not need to worry about the tree or boulder objects.
+
+In the same directory as this README file, you'll see a file named "savedgame".
+In the game, we can use the restore command to load a saved gamed. Let's do so:
+    
+    >restore ~/PA1/savedgame
+    Done.
+    Receiving room
+    You are in a round, stone room with a door to the east.  There
+    is a sign on the wall that reads: ‘receiving room’.
+    There is a lamp nearby.
+    There is a shovel here.
+    There is a shiny brass key here.
+    There is an emerald bracelet here.
+    There is a slip of paper here.
+    There is an axe here.
+    >
+
+From the above, we notice that there are many objects here. In particular,
+there is an axe. This axe would not be here if you played the first level of
+the game then arrived in this room. Instead I hacked the save file, to move
+the axe to this place. I did this because we will not implement the room that
+has the axe, but we will need the axe for homework #3.
+
+At this point, you can, if you want, play the game yourself for a while and try
+to solve some of the puzzles. You might find it easier to learn by just playing
+that game, than by reading what is written below. At some point, however, read
+the text below. It solves the puzzles that you may not be able to, such as the
+maze, and it goes through the behaviors that you will (in later homeworks) be
+putting into your game. So, when you are ready to read on, let's keep playing:
+
+    >e
+    Northbound Hallway
+    You are at the south end of a hallway that leads to the north.  There
+    are rooms to the east and west.
+    >n
+    It is pitch dark.  You are likely to be eaten by a grue.
+    >s
+    You trip over a grue and fall into a pit and break every bone in your
+    body.
+    You are dead.
+    You have scored 0 out of a possible 90 points.
+    %
+
+OK, so not taking the lamp was a bad idea. Let's try again:
+
+    >restore ~/PA1/savedgame
+    Done.
+    Receiving room
+    You are in a round, stone room with a door to the east.  There
+    is a sign on the wall that reads: ‘receiving room’.
+    There is a lamp nearby.
+    There is a shovel here.
+    There is a shiny brass key here.
+    There is an emerald bracelet here.
+    There is a slip of paper here.
+    There is an axe here.
+    >get all
+    A lamp: Taken.
+    A shovel: Taken.
+    A brass key: Taken.
+    A bracelet: Taken.
+    A slip of paper: Taken.
+    An axe: Taken.
+    >e
+    Northbound Hallway
+    You are at the south end of a hallway that leads to the north.  There
+    are rooms to the east and west.
+    >n
+    End of N/S Hallway
+    You are at the end of a north/south hallway.  You can go back to the south,
+    or off to a room to the east.
+    >e
+    Weight room
+    You are in an old weight room.  All of the equipment is either destroyed or
+    completely broken.  There is a door out to the west, and there is a ladder
+    leading down a hole in the floor.
+    There is a 10 pound weight here.
+    There is a life preserver here.
+    >get all
+    A weight: Your load would be too heavy.
+    A life preserver: Taken.
+    >drop all
+    I don't know what that is.
+    >
+
+From the above, we see that you can type 'get all', but you cannot type 'drop
+all'. We also see that you have a weight limit. Let's keep going:
+
+    >w
+    End of N/S Hallway
+    >e
+    Weight room
+    There is a 10 pound weight here.
+    >w
+    End of N/S Hallway
+    >s
+    Northbound Hallway
+    >w
+    Receiving room
+    >e
+    Northbound Hallway
+    >e
+    Sauna
+    You are in a sauna.  There is nothing in the room except for a dial
+    on the wall.  A door leads out to west.
+    It is normal room temperature in here.
+    >x sauna
+    I don't know what that is.
+    >x dial
+    The dial points to a temperature scale which has long since faded away.
+    >
+    
+Let's see how this dial works:
+    >turn dial
+    You must indicate clockwise or counterclockwise.
+    >turn dial counterclockwise
+    The dial will not turn further in that direction.
+    >turn dial clockwise
+    It is now luke warm in here.  You are perspiring.
+    >turn dial counterclockwise
+    The temperature has returned to normal room temperature.
+    >
+
+As you keep turning the dial clockwise, the message changes:
+    >w
+    Northbound Hallway
+    >e
+    Sauna
+    It is normal room temperature in here.
+    >turn dial clockwise
+    It is now luke warm in here.  You are perspiring.
+    >w
+    Northbound Hallway
+    >e
+    Sauna
+    It is luke warm in here.
+    >turn dial clockwise
+    It is pretty hot in here.  It is still very comfortable.
+    >w
+    Northbound Hallway
+    >e
+    Sauna
+    It is comfortably hot in here.
+    >turn dial clockwise
+    It is now very hot.  There is something very refreshing about this.
+    >w
+    Northbound Hallway
+    >e
+    Sauna
+    It is refreshingly hot in here.
+    >turn dial counterclockwise
+    It is pretty hot in here.  It is still very comfortable.
+    >w
+    Northbound Hallway
+    >e
+    Sauna
+    It is comfortably hot in here.
+    >turn dial clockwise
+    It is now very hot.  There is something very refreshing about this.
+    >turn dial clockwise
+    As the dial clicks into place, you immediately burst into flames.
+
+    You are dead.
+    You have scored 0 out of a possible 90 points.
+    %
+
+OK, so that was mistake. Let's try again. This time lets only get the lamp, so
+that we won't have a weight limit problem:
+    >restore ~/PA1/savedgame
+    Done.
+    Receiving room
+    You are in a round, stone room with a door to the east.  There
+    is a sign on the wall that reads: ‘receiving room’.
+    There is a lamp nearby.
+    There is a shovel here.
+    There is a shiny brass key here.
+    There is an emerald bracelet here.
+    There is a slip of paper here.
+    There is an axe here.
+    >get lamp
+    Taken.
+    >e
+    Northbound Hallway
+    You are at the south end of a hallway that leads to the north.  There
+    are rooms to the east and west.
+    >n
+    End of N/S Hallway
+    You are at the end of a north/south hallway.  You can go back to the south,
+    or off to a room to the east.
+    >e
+    Weight room
+    You are in an old weight room.  All of the equipment is either destroyed or
+    completely broken.  There is a door out to the west, and there is a ladder
+    leading down a hole in the floor.
+    There is a 10 pound weight here.
+    There is a life preserver here.
+    >get weight
+    Taken.
+    >d
+    Maze button room
+    You are in a maze of twisty little passages, all alike.
+    There is a button on the ground here.
+    >
+
+At this point, we've reached the first puzzle. The maze doesn't tell us the
+directions that we can move. We just have to use trial and error:
+    >n
+    You can't go that way.
+    >s
+    You can't go that way.
+    >e
+    Maze button room
+    >w
+    Maze button room
+    >ne
+    Maze button room
+    >nw
+    You can't go that way.
+    >se
+    Maze button room
+    >sw
+    Maze button room
+    >d
+    Maze button room
+    >u
+    Weight room
+    There is a life preserver here.
+    >
+
+Well, we tried every direction and none worked. Some were not allowed (n,s,nw)
+and others only took us back to where we started (the maze button room). The
+only move that had any effect was to climb back up the ladder. Obviously, the
+solution must involve the button:
+
+    >d
+    Maze button room
+    >press button
+    As you press the button, you notice a passageway open up, but
+    as you release it, the passageway closes.
+    >drop weight
+    Done.
+    A passageway opens.
+    >u
+    You can't go that way.
+    >get weight
+    Taken.
+    >u
+    Weight room
+    There is a life preserver here.
+    >
+
+From the above, we see that the weight can hold the button down. And when the
+button is pressed, you can no longer go up. You can go in other directions,
+however.
+
+The connections in the maze are as follows:
+                                                
+                                        Reception_area 
+                                       /          ^    
+                                    se/         nw|    
+                                     /            |      
+                                    /   ------- Maze6 ----+
+                                   /   /ne        ^       |
+                                   \  /         nw|       |
+                                    \/            |       |d
+                                    /\          Maze5     |e
+                                   /  \          ^ |      |n
+                                  /    |        d| |se    |s
+                                 /     V    se   | V      |w
+            Weight room <-------/    Maze3 ---> Maze4     |se
+                | ^                    ^|          |      |sw
+               d| |u(maybe)           u||d,e,s     |w     |
+                V |     nw(maybe)      |V          V      |
+               Maze1 --------------> Maze2 <-------+<-----+
+
+
+To navigate the maze, think of the word "used (u, se, d)", plus other nw & se:
+    >nw
+    Maze
+    You are in a maze of little twisty passages, all alike.
+    >u
+    Maze
+    You are in a maze of thirsty little passages, all alike.
+    There is a wax statuette of Richard Stallman here.
+    There is a floppy disk here.
+    >get all
+    An RMS statuette: Taken.  
+    A floppy disk: Taken.  
+    >se
+    Maze
+    You are in a maze of twenty little passages, all alike.
+    >d
+    Maze
+    You are in a daze of twisty little passages, all alike.
+    >nw
+    Maze
+    You are in a maze of twisty little cabbages, all alike.
+    >ne
+    Weight room
+    There is a life preserver here.
+    >
+
+In that last step, we could have gone to the nw to the reception area, rather
+that nw to the weight room (as the map from above shows). But we needed to go
+back and get our things, the life preserver in particular:
+
+    >get all
+    A life preserver: Taken.
+    >w
+    End of N/S Hallway
+    >s
+    Northbound Hallway
+    >w
+    Receiving room
+    There is a shovel here.
+    There is a shiny brass key here.
+    There is an emerald bracelet here.
+    There is a slip of paper here.
+    There is an axe here.
+    >get all
+    A shovel: Taken.
+    A brass key: Taken.
+    A bracelet: Taken.
+    A slip of paper: Taken.
+    An axe: Taken.
+    >e
+    Northbound Hallway
+    >n
+    End of N/S Hallway
+    >e
+    Weight room
+    >d
+    Maze button room
+    There is a 10 pound weight here.
+    >nw
+    Maze
+    >u
+    Maze
+    >se
+    Maze
+    >d
+    Maze
+    >nw
+    Maze
+    >nw
+    Reception area
+    You are in a reception area for a health and fitness center.  The place
+    appears to have been recently ransacked, and nothing is left.  There is
+    a door out to the south, and a crawlspace to the southeast.
+    >s
+    Health Club front
+    You are outside a large building to the north which used to be a health
+    and fitness center.  A road leads to the south.
+    >s
+    Lakefront North
+    You are at the north side of a lake.  On the other side you can see
+    a road which leads to a cave.  The water appears very deep.
+    > drop preserver
+    Done.
+    >s
+    You dive in the water, and at first notice it is quite cold.  You then
+    start to get used to it as you realize that you never really learned how
+    to swim.
+
+    You are dead.
+    You have scored 0 out of a possible 90 points.
+    %
+
+Well that was a mistake. Let us instead not drop the life preserver:
+
+    >s
+    Lakefront North
+    You are at the north side of a lake.  On the other side you can see
+    a road which leads to a cave.  The water appears very deep.
+    >s
+    Lakefront South
+    You are at the south side of a lake.  A road goes to the south.
+    >s
+    Cave Entrance
+    The entrance to a cave is to the south.  To the north, a road leads
+    towards a deep lake.  On the ground nearby there is a chute, with a sign
+    that says ‘put treasures here for points’.
+    >
+
+This chute is a place to score points:
+
+    >x chute
+    I see nothing special about that.
+    >score
+    You have scored 0 out of a possible 90 points.
+    >put bracelet in chute
+    You hear it slide down the chute and off into the distance.
+    You have scored 10 out of a possible 90 points.
+    >score
+    You have scored 10 out of a possible 90 points.
+    >
+
+The bracelet was worth 10 points. But none of our other items are treasures:
+    >i
+    You currently have:
+    A lamp
+    An RMS statuette
+    A floppy disk
+    A life preserver
+    A shovel
+    A brass key
+    A slip of paper
+    An axe
+    >put preserver in chute
+    You hear it slide down the chute and off into the distance.
+    >put paper in chute
+    You hear it slide down the chute and off into the distance.
+    >put shovel in chute
+    You hear it slide down the chute and off into the distance.
+    >put floppy in chute
+    You hear it slide down the chute and off into the distance.
+    >put key in chute
+    You hear it slide down the chute and off into the distance.
+    >score
+    You have scored 10 out of a possible 90 points.
+    >l
+    Cave Entrance
+    The entrance to a cave is to the south.  To the north, a road leads
+    towards a deep lake.  On the ground nearby there is a chute, with a sign
+    that says ‘put treasures here for points’.
+    >i
+    You currently have:
+    A lamp
+    An RMS statuette
+    An axe
+    >
+
+We see that none of these items gained me any points. We also see that they
+gone. Now let us consider the statuette in more detail:
+    >x rms
+    The statuette is of the likeness of Richard Stallman, the author of the
+    famous EMACS editor.  You notice that he is not wearing any shoes.
+    >drop rms
+    Done.
+    >n
+    Lakefront South
+    >x rms
+    I don't see that here.
+    >s
+    Cave Entrance
+    There is a wax statuette of Richard Stallman here.
+    >x rms
+    The statuette is of the likeness of Richard Stallman, the author of the
+    famous EMACS editor.  You notice that he is not wearing any shoes.
+    >
+
+From the above, we see that you don't need to be holding an object to examine
+it, but you do have to be in the same place. We also learn that the statuette
+is made of wax. (The x command does not tell us this, but we see the message
+"There is a wax statuette of Richard Stallman here.") Why wax? Well, wax melts.
+Was there a way to melt it? Well, too late now, let's put it down the chute:
+
+    >put rms in chute
+    You don't have that.
+    >get rms
+    Taken.
+    >put rms in chute
+    You hear it slide down the chute and off into the distance.
+    >score
+    You have scored 10 out of a possible 90 points.
+    >
+
+From the above, we see that objects cannot be put in the chute unless you have
+them in your inventory (unlike x, which allowed them to be on the ground).
+We also see that the statuette gives you no points, in its current form (maybe
+if we had melted it...).
+
+Anyway, let's keep going:
+    >s
+    As you enter the room you hear a rumbling noise.  You look back to see
+    huge rocks sliding down from the ceiling, and blocking your way out.
+    
+    Misty Room
+    You are in a misty, humid room carved into a mountain.
+    To the north is the remains of a rockslide.  To the east, a small
+    passage leads away into the darkness.
+    There is a gold bar here.
+    >n
+    You can't go that way.
+    >
+
+At this point, there is no going back. It is the third level of the game. We
+will only implement a small part of this level:
+    >get gold
+    Taken.
+    >e
+    Cave E/W passage
+    You are in an east/west passageway.  The walls here are made of
+    multicolored rock and are quite beautiful.
+    >e
+    N/S/W Junction
+    You are at the junction of two passages. One goes north/south, and
+    the other goes west.
+    >s
+    South end of cave passage
+    You are at the south end of a north/south passageway.  There is a hole
+    in the floor here, into which you could probably fit.
+    >d
+    Bathroom
+    You are in a bathroom built for workers in the cave.  There is a
+    urinal hanging on the wall, and some exposed pipes on the opposite
+    wall where a sink used to be.  To the north is a bedroom.
+    >u
+    You can't go that way.
+    >
+
+Here we see that you cannot climb back up the hole. Well, lets look around the
+bathroom:
+    >x pipes
+    I see nothing special about that.
+    >x pipe
+    I see nothing special about that.
+    >x urinal
+    The urinal is very clean compared with everything else in the cave.  There
+    isn't even any rust.  Upon close examination you realize that the drain at
+    the bottom is missing, and there is just a large hole leading down the
+    pipes into nowhere.  The hole is too small for a person to fit in.  The
+    flush handle is so clean that you can see your reflection in it.
+    >
+
+Why is that handle so shiny? It is broken, so why is it still being used?
+    >put gold in urinal
+    You hear it plop down in some water below.
+    >flush
+    Whoooosh!!
+    You have scored 20 out of a possible 90 points.
+    >i
+    You currently have:
+    A lamp
+    An axe
+    >
+    
+OK. It is a way to save treasure. Let's move on:
+    >l
+    Bathroom
+    You are in a bathroom built for workers in the cave.  There is a
+    urinal hanging on the wall, and some exposed pipes on the opposite
+    wall where a sink used to be.  To the north is a bedroom.
+    >n
+    Bedroom
+    You are in what appears to be a worker's bedroom.  There is a queen-
+    sized bed in the middle of the room, and a painting hanging on the
+    wall.  A door leads to another room to the south, and stairways
+    lead up and down.
+    >x bed
+    It is a queen sized bed, with a very firm mattress.
+    >x painting
+    It is a velvet painting of Elvis Presley.  It seems to be nailed to the
+    wall, and you cannot move it.
+    >
+    
+Now these stairs go up and down. But we are not going to implement the rooms
+that are below. So let's go up.
+    >u
+    North end of cave passage
+    You are at the north end of a north/south passageway.  There are stairs
+    leading down from here.  There is also a door leading west.
+    >s
+    N/S/W Junction
+    >s
+    South end of cave passage
+    >d
+    Bathroom
+    >n
+    Bedroom
+    >u
+    North end of cave passage
+    You are at the north end of a north/south passageway.  There are stairs
+    leading down from here.  There is also a door leading west.
+    >
+
+So there is a loop (s,s,d,n,u) here. There is only one more room in our version
+of the game, the room behind that western door:
+
+    >w
+    You must type a 3 digit combination code to enter this room.
+    Enter it here:123
+    Sorry, that combination is incorrect.
+    >
+    
+What is the combination? We'll have to find that out later (it was on the
+floppy disk, but that is not how we will find it out). For now, lets assume it
+is '123':
+    >w
+    You must type a 3 digit combination code to enter this room.
+    Enter it here:123
+    Gamma computing center
+    You are in the Gamma Computing Center.  An IBM 3090/600s is whirring
+    away in here.  There is an ethernet cable coming out of one of the units,
+    and going through the ceiling.  There is no console here on which you
+    could type.
+    >x ibm
+    I see nothing special about that.
+    >x cable
+    I see nothing special about that.
+    >cut cable
+    As you break the ethernet cable, everything starts to blur. You collapse
+    for a moment, then straighten yourself up.
+
+    Connection closed
+    $
+
+And that is as far as we will play the game, for now.
+There are a few special situations that we can go back and see, however.
+Let's go back to the maze button room:
+    >d
+    Maze button room
+    You are in a maze of twisty little passages, all alike.
+    There is a button on the ground here.
+    >drop weight
+    Done.
+    A passageway opens.
+    >nw
+    Maze
+    You are in a maze of little twisty passages, all alike.
+    >u
+    Maze
+    You are in a maze of thirsty little passages, all alike.
+    There is a wax statuette of Richard Stallman here.
+    There is a floppy disk here.
+    >get all
+    An RMS statuette: Taken.
+    A floppy disk: Taken.
+    >se
+    Maze
+    You are in a maze of twenty little passages, all alike.
+    >d
+    Maze
+    You are in a daze of twisty little passages, all alike.
+    >nw
+    Maze
+    You are in a maze of twisty little cabbages, all alike.
+    >ne
+    Weight room
+    There is a life preserver here.
+    >w
+    End of N/S Hallway
+    >s
+    Northbound Hallway
+    >drop floppy
+    Done.
+    >e
+    Sauna
+    It is normal room temperature in here.
+    >i
+    You currently have:
+    A lamp
+    An RMS statuette
+    >turn dial clockwise
+    It is now luke warm in here.  You are perspiring.
+    >turn dial clockwise
+    It is pretty hot in here.  It is still very comfortable.
+    >turn dial clockwise
+    It is now very hot.  There is something very refreshing about this.
+    You notice the wax on your statuette beginning to melt, until it completely
+    melts off.  You are left with a beautiful diamond!
+    >w
+    Northbound Hallway
+    There is a floppy disk here.
+    >get all
+    A floppy disk: Taken.
+    >i
+    You currently have:
+    A lamp
+    A diamond
+    A floppy disk
+    >x diamond
+    I see nothing special about that.
+    >e
+    Sauna
+    It is refreshingly hot in here.
+    You notice your floppy disk beginning to melt.  As you grab for it, the
+    disk bursts into flames, and disintegrates.
+    >i
+    You currently have:
+    A lamp
+    A diamond
+    >w
+    Northbound Hallway
+    >n
+    End of N/S Hallway
+    >e
+    Weight room
+    There is a life preserver here.
+    >d
+    Maze button room
+    There is a 10 pound weight here.
+    >nw
+    Maze
+    >u
+    Maze
+    >se
+    Maze
+    >d
+    Maze
+    >nw
+    Maze
+    >nw
+    Reception area
+    You are in a reception area for a health and fitness center.  The place
+    appears to have been recently ransacked, and nothing is left.  There is
+    a door out to the south, and a crawlspace to the southeast.
+    >s
+    As you exit the building, you notice some flames coming out of one of the
+    windows.  Suddenly, the building explodes in a huge ball of fire.  The
+    flames engulf you, and you burn to death.
+
+    You are dead.
+    You have scored 0 out of a possible 90 points.
+    %
+
+From the above we see that the fully-heated sauna room has three effects:
+- It melts the statuette to create the diamond.
+- It melts the floppy disk.
+- It kills you if you try to leave the health and fitness center.
+
+Although you will be implementing all of the above output, you will not be
+doing so all at once. In this first programming assignment, you will only
+be creating the rooms and putting objects in those rooms.
+
+You finished this file. So now go read the "~/PA1/PA1description.txt" file.

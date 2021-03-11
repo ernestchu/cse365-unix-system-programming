@@ -1,0 +1,1 @@
+find . -name "*" | sed 's,/\([ewnsud]\),/z\1,g;s/z\([duwes][^/][^/]\)/\1/'|sort | tr -d z > ~/PA1/yourOutput

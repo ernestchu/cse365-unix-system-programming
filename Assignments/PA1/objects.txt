@@ -1,0 +1,116 @@
+==> ./buttonRoom/button <==
+As you press the button, you notice a passageway open up, but
+as you release it, the passageway closes.
+
+==> ./buttonRoom/ladder <==
+It is a normal ladder that is permanently attached to the hole.
+
+==> ./buttonRoom/nw/u/floppy <==
+I see nothing special about that.
+
+==> ./buttonRoom/nw/u/rms <==
+The statuette is of the likeness of Richard Stallman, the author of the
+famous EMACS editor.  You notice that he is not wearing any shoes.
+
+==> ./buttonRoom/nw/u/se/d/nw/nw/s/s/lake <==
+I see nothing special about that.
+
+==> ./buttonRoom/nw/u/se/d/nw/nw/s/s/s/lake <==
+I see nothing special about that.
+
+==> ./buttonRoom/nw/u/se/d/nw/nw/s/s/s/s/chute <==
+I see nothing special about that.
+
+==> ./mistyRoom/gold <==
+I see nothing special about that.
+
+==> ./mistyRoom/e/e/n/w/cable <==
+I see nothing special about that.
+
+==> ./mistyRoom/e/e/n/w/ibm <==
+I see nothing special about that.
+
+==> ./mistyRoom/e/e/n/d/bed <==
+It is a queen sized bed, with a very firm mattress.
+
+==> ./mistyRoom/e/e/n/d/painting <==
+It is a velvet painting of Elvis Presley.  It seems to be nailed to the
+wall, and you cannot move it.
+
+==> ./mistyRoom/e/e/n/d/s/pipe <==
+I see nothing special about that.
+
+==> ./mistyRoom/e/e/n/d/s/pipes <==
+I see nothing special about that.
+
+==> ./mistyRoom/e/e/n/d/s/urinal <==
+The urinal is very clean compared with everything else in the cave.  There
+isn't even any rust.  Upon close examination you realize that the drain at the
+bottom is missing, and there is just a large hole leading down the
+pipes into nowhere.  The hole is too small for a person to fit in.  The
+flush handle is so clean that you can see your reflection in it.
+
+==> ./buttonRoom/button <==
+As you press the button, you notice a passageway open up, but
+as you release it, the passageway closes.
+
+==> ./buttonRoom/ladder <==
+It is a normal ladder that is permanently attached to the hole.
+
+==> ./receivingRoom/axe <==
+I see nothing special about that.
+
+==> ./receivingRoom/bracelet <==
+I see nothing special about that.
+
+
+==> ./receivingRoom/key <==
+I see nothing special about that.
+
+==> ./receivingRoom/lamp <==
+The lamp is hand-crafted by Geppetto.
+
+==> ./receivingRoom/paper <==
+The paper says: Don't forget to type "help" for help.  Also, remember
+this word: "worms"
+
+==> ./receivingRoom/shovel <==
+It is a normal shovel with a price tag attached that says $19.99.
+
+==> ./receivingRoom/e/e/dial <==
+The dial points to a temperature scale which has long since faded away.
+
+==> ./receivingRoom/e/e/temperature0 <==
+The temperature has returned to normal room temperature.
+
+==> ./receivingRoom/e/e/.temperature1 <==
+It is now luke warm in here. You are perspiring.
+
+==> ./receivingRoom/e/e/.temperature2 <==
+It is pretty hot in here. It is still very comfortable.
+
+==> ./receivingRoom/e/e/.temperature3 <==
+It is now very hot.  There is something very refreshing about this.
+
+==> ./receivingRoom/e/e/.temperature4 <==
+As the dial clicks into place, you immediately burst into flames.
+
+You are dead.
+
+==> ./receivingRoom/e/n/e/ladder <==
+It is a normal ladder that is permanently attached to the hole.
+
+==> ./receivingRoom/e/n/e/preserver <==
+A life preserver
+It says S. S. Minnow.
+
+==> ./receivingRoom/e/n/e/weight <==
+You observe that the weight is heavy.
+
+==> ./receivingRoom/e/n/e/d/button <==
+As you press the button, you notice a passageway open up, but
+as you release it, the passageway closes.
+
+==> ./receivingRoom/e/n/e/d/ladder <==
+It is a normal ladder that is permanently attached to the hole.
+

@@ -1,0 +1,541 @@
+                          UNIX System Programming
+                         Programming Assignment #1
+
+Due: Wednesday, March 10  at  11:59 pm.
+
+Submission rules: Submit to the cyberuniversity exactly one tar file, named:
+                  "<your student ID>.tar"
+                  You will, of course, replace "<your student ID>" with
+                  your unique ID number (B9.... or M9....)
+
+                  The end of Lecture 1 describes how to upload your homework.
+                  These lecture slides cannot be understood from a printout:
+                  they must be played to watch the animation that explains the
+                  upload process. See gradingPolicy.txt for more details.
+                  
+Getting help:   - The Professor has office hours on Monday from 12:00-2:00,
+                  and on Friday from 10:00-12:00, in room 9037. You can also 
+                  reach me by email. My preferred email is stevewhaga yahoo.com
+                - The TA is also available to answer your questions.
+                - General questions about the assignment can also be posted to 
+                  the Discussion Forum of the class's cyberuniversity page.
+                - You may also discuss the ideas of the assignment with your
+                  classmates. But you CANNOT share code. See gragingPolicy.txt
+                  file for more details.
+
+How to read this file:
+
+Before you read this, you should read the README and explanatoryWalkthrough.txt
+files. Also review the slides for Lecture 1, because those commands are used in
+the text below.
+
+You should read this file twice. Once before you implement it, and a second
+time, when you are implementing it. After reading this file, next read the
+gradingPolicy.txt file. Read that file before implementing this assignment,
+because it defines what is considered cheating.
+
+Assignment Summary:
+
+In the first week, you learned about creating directories, files, hidden files,
+and links. You learned about navigating directory structures. In order to 
+reinforce the learning of these concepts, you will create a directory structure
+that you will use in later weeks to implement the dunnet game. There is some
+similarity between the idea of placing files in a directory and the idea of
+placing objects in a room of a text-based adventure game.
+
+The first step is to create the rooms (ie, the directory structure). From your
+home directory, create a subdirectory called "rooms". Then cd to rooms. Inside
+of here, you will be creating 3 subdirectories. The first is "receivingRoom".
+From reading the walkthrough of the game, you will recall that, when the part
+of the game that we are implementing begins, you find yourself in a "Receiving
+room". Well, that is why we want to create this directory.
+
+Next, cd into receivingRoom. You will recall that you may only go east from
+the receiving room. So make a subdirectory named "e". Then cd into e.
+
+You will recall that the room east of the receiving room is the "Northbound
+Hallway", and that from here you can go north, east or west. Going west would
+mean going backwards (ie, "cd .."), so we do not make a subdirectory for that.
+But we do make two subdirectories named "n" and "e". Then cd into n. (We do not
+need to cd into e, because the Sauna has no exit except by going back the way
+you enter it (ie, cd ..).)
+
+You will recall that the "End of N/S Hallway" has exits south and east. South
+retraces our steps (cd ..), so we only make a subdirectory "e". Then cd to e.
+
+Now you are in the "Weight Room". From here, you can either retrace your steps
+or go down. So make a subdirectory "d" and cd into it.
+
+You will recall that this "Maze Button Room" only allows you to retrace your
+steps by going up the ladder. So you will not make any subdirectories. But
+you will also recall that a passageway can be opened by dropping the weight.
+We could implement this with a hidden subdirectory (".nw"), but we will instead
+create a new directory off of ~/rooms. The reason is that you cannot go up when
+the weight is dropped. So, in later homeworks, to prevent the chance of using
+cd .. to climb back up the ladder, we will not make the maze a subdirectory.
+
+Before going on with the maze, let's see what we have so far:
+    % cd ~/rooms
+    % find . -name "[nsewud]"
+    ./receivingRoom/e
+    ./receivingRoom/e/e
+    ./receivingRoom/e/n
+    ./receivingRoom/e/n/e
+    ./receivingRoom/e/n/e/d
+    %
+    
+Earlier, we had said that there would be three subdirectories from the ~/rooms
+directory. The second one will be called "buttonRoom". It represents the
+room connections within the maze. Make the buttonRoom and cd into it. Now a
+"cd .." will take us to ~/rooms, rather that the weight room. This is the right
+behavior, because we cannot go up when the button is pressed.
+
+From the ~/rooms/buttonRoom directory, make a subdirectory "nw" (to the "maze
+of little twisty passages"). But don't "cd nw" yet, because there is more work
+to do in the button room. You will remember that this is a maze. If you try
+going up, north, south, then you will be told that "You can't go that way."
+But if you try going any other direction, you will not get that message. This
+means that these directions are allowed, but take you nowhere. (This is how
+the game makes the maze difficult for players.) As far as we are concerned, it
+means that we need to create symbolic links for these three directions. They
+should all link back to the current directory (ie, "."). If you type ls -l,
+you should see them listed as "d -> .", "e -> .", "ne -> .", "se -> .",
+"sw -> .", and "w -> .". 
+
+Similarly, the nw room has a real subdirectory to "u", and false paths that
+loop back to itself for "d",  "n", "e", "ne", "nw", "s", "sw", and "w". NOTE
+THAT I'VE ADDED "e" AND "s" TO THIS LIST. But the "se" direction is disallowed.
+This creates a problem because the "se" direction would be backtracking (since
+the current directory is named nw). However, "se" is not an allowed direction.
+This is exactly the situation that we had in the maze button room. But this
+time we'll solve it differently. We'll create a symbolic link to a subdirectory
+that does not exist in this current directory. The nonexistent directory name
+can be whatever you want, but the link name to it must be "se".
+
+Similarly, the nw/u room has a real subdirectory to "se", and false paths that
+loop back to itself for "ne", "nw", "sw", and "w". THE DIRECTIONS "e" AND "s"
+link to "..". The "d" direction also corresponds to "cd .." -- but we 
+don't make a link for this direction, because we went up to get to this room.
+
+The nw/u/se room has a real subdirectory to "d", and a false path "w" that goes
+back to the second maze room ("little twisty passages"). This means the link
+is to its grandparent, and must be implemented using relative addressing (see
+lecture 1, slide #29). In fact all the links below must use relative addressing
+(except for the one to the mistyRoom). We also need to indicate that you cannot
+backtrack from nw/u/se, by creating a symbolic link "nw", linking it to a non-
+existent subdirectory name.
+
+The nw/u/se/d room has a real subdirectory named "nw", a false path "se" that
+goes to its parent directory, and a backtrack-disallowing false link named
+"u".
+
+The nw/u/se/d/nw room has a real subdirectory "nw". It also has a symbolic link
+named "ne" linking to the weight room. Recall: this link must, like the others,
+use relative addressing. All other directions (ie, d,e,n,s,se,sw,u,w) link to
+the second maze room ("little twisty passages"). Which means they are links to
+the great-great-grandparent. Note: since "se" is already getting a link, don't
+create a false one.
+
+The buttonRoom/nw/u/se/d/nw/nw gets a real subdirectory "s". It also gets a
+link named "se" back to its great-great-grandparent (thirsty little passages).
+
+The buttonRoom/nw/u/se/d/nw/nw/s room is outside the health center, so it is
+beyond the maze. So there are no links and "cd .." is legal backtracking. From
+her, you can go back north (with cd ..) and you can go south (with cd s). Going
+south a few more times will get you to the "misty room" of the cave. A map of
+what we've covered so far looks like this (when viewing the following map, use
+a fixed width font, such as your UNIX display uses):
+
+                                                   s
+Receiving Room                   Reception Area------->Health Club Front 
+      |^                      se/        ^     <-------       |^
+     e||w                      /       nw|        n          s||n
+      V|       e              /          |                    V|
+Nbound Hallway --> Sauna     /  /----- Maze6---+      Northern Lakefront
+      |^      <--           /  /ne       ^     |              |^
+     n||s      w           /  /        nw|     |             s||n
+      V|                   \ /           |     |d             V|
+End of Hallway              X          Maze5   |e     Southern Lakefront
+      |^                   / \           ^|     |n             |^
+     e||w                 /   |         d||se   |s            s||n
+      V|                 /    V    se    |V     |w             V|
+ Weight Room<-----------/  Maze3 ----> Maze4   |se      Cave Entrance
+      |^                     ^|         |      |sw            |
+     d||u(maybe)            u||d,e,s    |w     |             s|
+      V|      nw(maybe)      |V         V      V              V
+    Maze1 ---------------> Maze2 <------+------+         Misty Room
+
+
+As for the Misty room, this is another one-way path, because there is a rock
+slide blocking your return. To keep paths from getting too long, we will again
+create a new subdirectory named "mistyRoom" off of the ~/rooms directory. In
+other words, we will prevent backtracking the same way that we did for the maze
+button room (by not making it a subdirectory of the room we came from). This
+means that the cave entrance will need a symbolic link to mistyRoom. This link
+must use absolute addressing (see Lecture 1, slide 28).
+
+From the Misty room, there is a room to the east, and another east of that.
+From mistyRoom/e/e you can go north or south. If you go south, you can either
+go back or go down through a hole -- but you won't be able to climb back up.
+Going down the hole is implemented by a relative address link to the bathroom.
+
+Choosing instead to go north from mistyRoom/e/e, you get to a place where you
+can go west or down. Down is implemented as a normal subdirectory. But west is
+implemented as a directory that you do not have execute permission for. This
+will simulate the idea that you do not know the combination to enter this room.
+If you "ls -ld ~/rooms/mistyRoom/e/e/n/w", then the output should begin with:
+drw-rw-rw-... (Note: an issue may arise when using tar on rooms with permission
+restrictions. In the end, you'll need to tar up your answer before submitting.
+I have heard that some versions of UNIX might refuse to work when the directory
+you are tarring has permission restrictions, but it works for my computer. If
+it does not work on your computer, then I will allow you to give only the user
+execute permission. That is to say, you are allowed to have: drwxrw-rw-. )
+
+If you go down, you'll be in a bedroom. From here, the dunnet game lets you go
+back up, go south, or go down. But we will not implement the part where you go
+down. We do implement going south, as a subdirectory that is for the bathroom,
+which is, as you will recall, the place that we end up in when we go down the
+hole.
+
+The mapping of this part of the game is:
+                               e               d
+            Computing Center ----> North End ----> Bedroom
+                             <----     |^    <----   |^
+                               w       ||n           ||n
+                                      s||           s||
+             e                  e      V|            V|
+Misty Room ----> Cave Passage ----> Junction      Bathroom
+           <----              <----    |^        7|
+             w                  w      ||n      /
+                                      s||      /d
+                                       V|     / 
+                                    South End
+                                    
+Once you have done all of the above, you should be able to get the following
+output:
+% cd ~/rooms
+% find . -name "[neswud]"
+./buttonRoom/d
+./buttonRoom/e
+./buttonRoom/nw/d
+./buttonRoom/nw/e
+./buttonRoom/nw/n
+./buttonRoom/nw/s
+./buttonRoom/nw/u
+./buttonRoom/nw/u/e
+./buttonRoom/nw/u/s
+./buttonRoom/nw/u/se/d
+./buttonRoom/nw/u/se/d/nw/d
+./buttonRoom/nw/u/se/d/nw/e
+./buttonRoom/nw/u/se/d/nw/n
+./buttonRoom/nw/u/se/d/nw/nw/s
+./buttonRoom/nw/u/se/d/nw/nw/s/s
+./buttonRoom/nw/u/se/d/nw/nw/s/s/s
+./buttonRoom/nw/u/se/d/nw/nw/s/s/s/s
+./buttonRoom/nw/u/se/d/nw/nw/s/s/s/s/s
+./buttonRoom/nw/u/se/d/nw/s
+./buttonRoom/nw/u/se/d/nw/u
+./buttonRoom/nw/u/se/d/nw/w
+./buttonRoom/nw/u/se/d/u
+./buttonRoom/nw/u/se/w
+./buttonRoom/nw/u/w
+./buttonRoom/nw/w
+./buttonRoom/w
+./mistyRoom/e
+./mistyRoom/e/e
+./mistyRoom/e/e/n
+./mistyRoom/e/e/n/d
+./mistyRoom/e/e/n/d/s
+./mistyRoom/e/e/n/w
+./mistyRoom/e/e/s
+./mistyRoom/e/e/s/d
+./receivingRoom/e
+./receivingRoom/e/e
+./receivingRoom/e/n
+./receivingRoom/e/n/e
+./receivingRoom/e/n/e/d
+% find . -name "[ns][ew]"
+./buttonRoom/ne
+./buttonRoom/nw
+./buttonRoom/nw/ne
+./buttonRoom/nw/nw
+./buttonRoom/nw/se
+./buttonRoom/nw/sw
+./buttonRoom/nw/u/ne
+./buttonRoom/nw/u/nw
+./buttonRoom/nw/u/se
+./buttonRoom/nw/u/se/d/nw
+./buttonRoom/nw/u/se/d/nw/ne
+./buttonRoom/nw/u/se/d/nw/nw
+./buttonRoom/nw/u/se/d/nw/nw/se
+./buttonRoom/nw/u/se/d/nw/se
+./buttonRoom/nw/u/se/d/nw/sw
+./buttonRoom/nw/u/se/d/se
+./buttonRoom/nw/u/se/nw
+./buttonRoom/nw/u/sw
+./buttonRoom/se
+./buttonRoom/sw
+
+The next step is to put files into these rooms. First of all, each room gets
+a file named "9". The contents of this file is not important, it can even be
+empty. (The purpose of this file is to mark visited rooms, as we'll see later.)
+Also, each room gets a file named "description". Since each room gets a "9" and
+a "description" file, you can actually add these files while you are creating
+the directories described above. But what goes in the "description" file? Well,
+recall that I have provided you with a file named "descriptions.txt". Let's get
+an idea of what is in that file, by looking at part of it:
+    % tail ~/PA1/descriptions.txt
+
+    ==> ./receivingRoom/e/n/e/d/description <==
+    Maze button room
+    You are in a maze of twisty little passages, all alike.
+
+    ==> ./receivingRoom/e/n/e/description <==
+    Weight room
+    You are in an old weight room.  All of the equipment is either destroyed or
+    completely broken.  There is a door out to the west, and there is a ladder
+    leading down a hole in the floor.
+    %
+From the above we see that the file contains descriptions of the various rooms.
+(The file was generated by typing "find . -name description | xargs head -9",
+but that doesn't matter here, because you don't know the xargs command yet.)
+For now, all you need to do is to cut and paste from this file. For example,
+suppose that you want the description for the sauna room. Then you can open
+"descriptions.txt" in a different window (maybe in Wordpad, see slide #147 of
+Lecture 1). Once it is opened, locate the sauna description in the file, and
+then copy-and-paste it into a text editor, saving the result as "description"
+(assuming you are in the sauna, in that you are in: rooms/receivingRoom/e/e).
+
+Emacs is the editor I suggest using for creating the description. To run it, go
+to the directory where you want to make the file and type "emacs description".
+Then paste the lines from the ~/PA1/descriptions.txt file. Then save the file
+(ctrl-x,ctrl-s), and exit emacs (ctrl-x, ctrl-c). By the way, if you save more
+than once, then a backup copy named "description~" will be created. Remember to
+remove this.
+
+An alternative way to create these files is to redirect the part that you want.
+Suppose you want to create the description for buttonRoom/nw/u/se/d/nw/nw/s/s,
+which is the north side of the lake. You can find it in the descriptions.txt
+file by typing (-B1 means we also get 1 line Before the match):
+    % pwd
+    /home/yourUNIXname/rooms/buttonRoom/nw/u/se/d/nw/nw/s/s
+    % fgrep "Lakefront North" descriptions.txt -B1
+    ==> ./buttonRoom/nw/u/se/d/nw/nw/s/s/description <==
+    Lakefront North
+    %
+From the above, we see that we did find the description and its path does match
+to our pwd. Now what we want to see is how much of the file is the description
+for this place. We might start by guessing that it is 5 lines (by using -A5,
+which indicates 5 lines After the match):
+    % fgrep "Lakefront North" descriptions.txt -A5
+    Lakefront North
+    You are at the north side of a lake.  On the other side you can see
+    a road which leads to a cave.  The water appears very deep.
+    
+    ==> ./buttonRoom/nw/u/se/d/nw/nw/s/s/s/description <==
+    Lakefront South
+    %
+From the above we see that only the next 2 lines hold the description. So we
+can now redirect that part:
+    % fgrep "Lakefront North" descriptions.txt -A2 > description
+    % cat description
+    Lakefront North
+    You are at the north side of a lake.  On the other side you can see
+    a road which leads to a cave.  The water appears very deep.
+    %
+So it worked, and created the file that we want. It worked because the output
+was redirected to a file: that is what the "> description" part does. We will
+talk about redirection in Lecture 2, but the idea is easy enough to understand,
+and so I am telling you here, in case you find it helpful for this homework.
+
+Once you have created all of the "description" and "9" files, you are almost
+done. All that is left is to add objects into the rooms. These objects (and
+their locations) are given in the "objects.txt" file I've given you. Let's
+look at part of it:
+    % tail objects.txt
+    ==> ./receivingRoom/e/n/e/weight <==
+    You observe that the weight is heavy.
+
+    ==> ./receivingRoom/e/n/e/d/button <==
+    As you press the button, you notice a passageway open up, but
+    as you release it, the passageway closes.
+
+    ==> ./receivingRoom/e/n/e/d/ladder <==
+    It is a normal ladder that is permanently attached to the hole.
+    %
+
+From the above, we see a file named "weight" in ./receivingRoom/e/n/e, and
+file named "button" and "ladder" in ./receivingRoom/e/n/e/d. The contents of
+each of these files should be as shown. Use the same technique that you already
+used to create description files (ie, either by cut-and-paste or y redirect).
+
+Of course, the weight, button, and ladder are only 3 of the objects that you
+will need to create from the "objects.txt" file. In fact, some of these objects
+are found in more than one room, so you can just copy the file. The ladder for
+example is in the weight room and the room below it. If you have made the file
+for the weight room, you can type:
+    % ls receivingRoom/e/n/e
+    9  d  description  ladder  preserver  weight
+    % cd receivingRoom/e/n/e/d
+    % cp ../ladder .
+    %
+
+Also many of the objects have the same text "I see nothing special about that."
+We can copy any of these files to new names in new locations. For example, the
+gold bar can be made if you have made the axe file already:
+    % cd ~/rooms/mistyRoom
+    % cp ../receivingRoom/axe gold
+
+Finally, note that there are a few hidden files that you need to make in the
+sauna room. These file names all start with a "."
+    % fgrep "/." objects -A3
+    ==> ./receivingRoom/e/e/.temperature1 <==
+    It is now luke warm in here. You are perspiring.
+
+    ==> ./receivingRoom/e/e/.temperature2 <==
+    It is pretty hot in here. It is still very comfortable.
+
+    ==> ./receivingRoom/e/e/.temperature3 <==
+    It is now very hot.  There is something very refreshing about this.
+
+    ==> ./receivingRoom/e/e/.temperature4 <==
+    As the dial clicks into place, you immediately burst into flames.
+
+    You are dead.
+    %
+
+
+Now that you have finished reading this file, read the gradingPolicy.txt file.
+
+Then do the assignment.
+
+When you are done, make a tar file of the HW1 directory. Your tarfile should
+not just be the contents of HW1, but also the "rooms" directory itself. Follow
+the tar file's naming rules described at the top of this file.
+
+Before submitting, re-read the gradingPolicy.txt file. It describes how to test
+whether your submission meets the minimum standard to receive a non-zero grade.
+If you do not have time or do not know how to make the links, description, or
+object files, you should at least create empty files with those names. This
+will let you at least meet the minimum standard.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+By the way, here are some tips you might find helpful in doing your homework:
+
+1. Use the up-arrow key to scroll through old commands. For example, making the
+   first few rooms does not require many key strokes:
+       % cd receivingRoom
+       % mkdir e
+       % mkdir e/e   <- I just did the Up-arrow and added a /e
+       % mkdir e/n   <- I just did the Up-arrow and turned the e into a n
+
+   You can also Up-arrow several times to modify and run an older command.
+
+2. Memorize the hot keys to modify a command line:
+     Ctrl-a: Takes you to the beginnig of the line. Suppose you had just made
+             a directory like this:
+                 % mkdir buttonRoom/nw/u/se/d/nw/nw
+
+             If you wanted to then cd into that directory, you can use the
+             up-arrow, then a ctrl-a to get to the beginning of the line,
+             then hit the delete key 5 times, then type "cd". At that point,
+             you'll have:
+                 % cd buttonRoom/nw/u/se/d/nw/nw
+
+     Ctrl-e: Takes you to the end of the line.
+
+     Ctrl-c: Erase the command you are typing. (ie, start over.)
+     
+     Ctrl-k: Kills everything to the right of the cursor. Not only is this
+             faster than holding down the delete key, it also saves the cut
+             text so that you can paste it later.
+
+     Ctrl-y: Paste in the cut text. So, for example, if you had typed:
+                 % cp gold ../receivingRoom/axe
+                 cp: cannot stat 'gold': No such file or directory
+                 %
+             Maybe the above failed because you got the arguments backwards.
+             So you hit Up-arrow, Ctrl-a, Right-arrow 7 times, Ctrl-k. At this
+             point you do not hit enter, but you will have:
+                 % cp gold
+             Now you hit Ctrl-a, Right-arrow 2 times, Ctrl-y. And you get:
+                 % cp ../receivingRoom/axe gold
+                 
+      Tab:   This completes the rest of a filename or command. For example,
+             if you want to view the gradingPolicy.txt file, you type:
+                 % less ~/PA1/g    <== At this point, hit tab
+             If you hit tab, it will auto-fill-in the rest:
+                 % less ~/PA1/gradingPolicy.txt
+             It also works on directories:
+                 % cd rooms/r  <== Here I hit tab
+             This gives me:
+                 % cd rooms/receivingRoom/    <== Here I hit tab
+             This gives me: 
+                 % cd rooms/receivingRoom/e
+             Recall that there are many objects in the receivingRoom, but only
+             one subdirectory (e). So UNIX was not confused by the other files
+             and knew that I wanted "e/" because I'm doing a "cd" command which
+             expects a directory argument. Let's keep going:
+                 % cd rooms/receivingRoom/e/  <== Here I hit tab
+             Nothing happens. This is because there are two subdirectories, e
+             and n. If I type n, and then hit tab 3 times, I get:
+                 % cd rooms/receivingRoom/e/n/e/d/
+                 % ls
+                 9  button  description  ladder
+                 %
+
+      Ctrl-c, Ctrl-d, Closing the window with your mouse: Try these things if
+             your computer gets stuck in some command. (The computer isn't
+             stuck, but you may not know what you are doing. For example, maybe
+             you did not remember that you exit the less command by hitting q.)
+
+3. If you were using emacs and you created a variety of backup files that have
+   the ~ at the end (eg description~), then you when you run findYourOutput.txt
+   You see all of these files in yourOutput. Well you can do this:
+       % cd rooms
+       % rm *~      <==Here, we must be VERY careful NOT to type: rm * ~
+       % rm */*~    <==Up-arrow, Left-arrow, type "/*". Again, be careful
+       % rm */*/*~  <==Up-arrow, Left-arrow, type "/*". Again, be careful
+       ... until you go enough levels to remove all of the *~ files.
+
+4. If you get confused about the directories, they can be renamed and moved
+   around. For example, if you made a directory path:
+       % mkdir buttonRoom/ne/u/se/d
+   But you then realize it's not "ne", it is "nw". Well you just rename the
+   ne directory to nw:
+       % mv buttonRoom/ne buttonRoom/nw
+   Directories can also be moved:
+       % mkdir buttonRoom/n/nw/u/se/d  <== Oops. There is no "n"
+       % mv buttonRoom/n/nw buttonRoom
+       % rmdir n
+       % ls -d buttonRoom/nw/u/se/d
+       /home/yourUNIXid/buttonRoom/nw/u/se/d
+       %
+    But you can't do that if the directory you are trying to move to exists:
+       % mkdir buttonRoom/nw/nw/u/se/d  <== Oops. There are not two "nw"
+       % mv buttonRoom/nw/nw buttonRoom
+       mv:cannot move 'buttonRoom/nw/nw' to 'buttonRoom/nw':Directory not empty
+       % mv buttonRoom/nw buttonRoom/junkdir
+       % mv buttonRoom/junkdir/nw buttonRoom       
+       % rmdir junkdir
+       % ls -d buttonRoom/nw/u/se/d
+       /home/yourUNIXid/buttonRoom/nw/u/se/d
+       %
+    Or you could have killed the 2nd nw, rather than the first:
+       % mkdir buttonRoom/nw/nw/u/se/d  <== Oops. There are not two "nw"
+       % mv buttonRoom/nw/nw/u buttonRoom/nw
+       % rmdir buttonRoom/nw/nw
+       % ls -d buttonRoom/nw/u/se/d
+       /home/yourUNIXid/buttonRoom/nw/u/se/d
+       %
+       
+5. If you make a bad link, it has to be removed before you can make a new one
+   with the same name.
+
+6. Remember that "cd -" takes you back to the previous directory you were in.
+
+7. Practice safe computing (always, but especial in UINX). This means that you
+   should tar up your partial solutions from time to time, and save the tar
+   file somewhere safer, such as in a Windows computer. (I do not meant that
+   UNIX is not safe, I mean that it is not safe for you, because you are a new
+   student, and might accidentally type rm *.)

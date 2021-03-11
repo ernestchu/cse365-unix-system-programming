@@ -1,0 +1,126 @@
+==> ./buttonRoom/description <==
+Maze button room
+You are in a maze of twisty little passages, all alike.
+
+==> ./buttonRoom/nw/description <==
+Maze
+You are in a maze of little twisty passages, all alike.
+
+==> ./buttonRoom/nw/u/description <==
+Maze 
+You are in a maze of thirsty little passages, all alike.
+
+==> ./buttonRoom/nw/u/se/d/description <==
+Maze   
+You are in a daze of twisty little passages, all alike.
+
+==> ./buttonRoom/nw/u/se/d/nw/description <==
+Maze    
+You are in a maze of twisty little cabbages, all alike.
+
+==> ./buttonRoom/nw/u/se/d/nw/nw/description <==
+Reception area
+You are in a reception area for a health and fitness center.  The place
+appears to have been recently ransacked, and nothing is left.  There is
+a door out to the south, and a crawlspace to the southeast.
+
+==> ./buttonRoom/nw/u/se/d/nw/nw/s/description <==
+Health Club front
+You are outside a large building to the north which used to be a health
+and fitness center.  A road leads to the south.
+
+==> ./buttonRoom/nw/u/se/d/nw/nw/s/s/description <==
+Lakefront North
+You are at the north side of a lake.  On the other side you can see
+a road which leads to a cave.  The water appears very deep.
+
+==> ./buttonRoom/nw/u/se/d/nw/nw/s/s/s/description <==
+Lakefront South
+You are at the south side of a lake.  A road goes to the south.
+
+==> ./buttonRoom/nw/u/se/d/nw/nw/s/s/s/s/description <==
+Cave Entrance
+The entrance to a cave is to the south.  To the north, a road leads
+towards a deep lake.  On the ground nearby there is a chute, with a sign
+that says ‘put treasures here for points’.
+
+==> ./buttonRoom/nw/u/se/description <==
+Maze  
+You are in a maze of twenty little passages, all alike.
+
+==> ./mistyRoom/description <==
+Misty Room
+You are in a misty, humid room carved into a mountain.
+To the north is the remains of a rockslide.  To the east, a small
+passage leads away into the darkness.
+
+==> ./mistyRoom/e/description <==
+Cave E/W passage
+You are in an east/west passageway.  The walls here are made of
+multicolored rock and are quite beautiful.
+
+==> ./mistyRoom/e/e/description <==
+N/S/W Junction
+You are at the junction of two passages. One goes north/south, and
+the other goes west.
+
+==> ./mistyRoom/e/e/n/d/description <==
+Bedroom
+You are in what appears to be a worker's bedroom.  There is a queen-
+sized bed in the middle of the room, and a painting hanging on the
+wall.  A door leads to another room to the south, and stairways
+lead up and down.
+
+==> ./mistyRoom/e/e/n/d/s/description <==
+Bathroom
+You are in a bathroom built for workers in the cave.  There is a
+urinal hanging on the wall, and some exposed pipes on the opposite
+wall where a sink used to be.  To the north is a bedroom.
+
+==> ./mistyRoom/e/e/n/description <==
+North end of cave passage
+You are at the north end of a north/south passageway.  There are stairs
+leading down from here.  There is also a door leading west.
+
+==> ./mistyRoom/e/e/n/w/description <==
+Gamma computing center
+You are in the Gamma Computing Center.  An IBM 3090/600s is whirring
+away in here.  There is an ethernet cable coming out of one of the units,
+and going through the ceiling.  There is no console here on which you
+could type.
+
+==> ./mistyRoom/e/e/s/description <==
+South end of cave passage
+You are at the south end of a north/south passageway.  There is a hole
+in the floor here, into which you could probably fit.
+
+==> ./receivingRoom/description <==
+Receiving room
+You are in a round, stone room with a door to the east.  There
+is a sign on the wall that reads: ‘receiving room’.
+
+==> ./receivingRoom/e/description <==
+Northbound Hallway
+You are at the south end of a hallway that leads to the north.  There
+are rooms to the east and west.
+
+==> ./receivingRoom/e/e/description <==
+Sauna
+You are in a sauna.  There is nothing in the room except for a dial
+on the wall.  A door leads out to west.
+
+
+==> ./receivingRoom/e/n/description <==
+End of N/S Hallway
+You are at the end of a north/south hallway.  You can go back to the south,
+or off to a room to the east.
+
+==> ./receivingRoom/e/n/e/d/description <==
+Maze button room
+You are in a maze of twisty little passages, all alike.
+
+==> ./receivingRoom/e/n/e/description <==
+Weight room
+You are in an old weight room.  All of the equipment is either destroyed or
+completely broken.  There is a door out to the west, and there is a ladder
+leading down a hole in the floor.

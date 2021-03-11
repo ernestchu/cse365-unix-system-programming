@@ -1,0 +1,94 @@
+In the next few programming assignments, we'll implement a text adventure game.
+It's interesting to compare text adventure games to UNIX's directory structure.
+In text games you walk between rooms containing objects you can examine & move;
+in UNIX you change between directories containing files you can examine & move.
+These games also have locked doors that you cannot get through without a key or
+combination; UNIX directories can also have permissions set to deny you access.
+Some objects can be hidden, and so can some UNIX files. So we can learn UNIX
+while having fun writing a game.
+
+The specific text adventure game that we will be recreating is one level of
+a game called Dunnet. The main reason that I've chosen this specific game is
+that you already have it in your UNIX system, because it comes with the emacs
+text editor. (Yes, I know that that is weird, why should a text editor have a
+game built into it?) Emacs is a good option for creating text files in UNIX.
+Many programmers use it. It takes a few minutes to memorize the key codes for
+simple commands. Many of these key codes also work on the UNIX command prompt,
+so it makes sense to learn them anyway (see the last few slides of lecture #1).
+
+To play the game, first verify that you have installed the emacs text editor.
+You don't want to install it to play this game -- you want it because it is
+a good word processor to use for UNIX programming. (But it also, inexplicably,
+does contain this game.) To verify that you have emacs, type (ignore the %):
+    % emacs
+
+If it doesn't run, then install it.  Once emacs is running, close it by typing
+Ctrl-x, Ctrl-c. I only had you open it to test if it was installed -- the
+dunnet game is going to be run from the UNIX command prompt, not from within
+the emacs screen. (You run it by typing: "emacs -batch -l dunnet".)
+
+We will now begin discussing the current programming assignment. In this first
+assignment, you will create the directories and files that map to part of the
+Dunnet game. (In the next homework we will use aliases to create some of the
+game's commands.) Once you've created the correct directory and file structure,
+then you will create a tarfile to submit it.
+
+If you are reading this file, then you must have: 1) successfully untarred the
+PA1.tar file, 2) gone into the PA1 directory that was made when you untarred,
+and 3) displayed this README file. So let's take a look at that directory:
+    % cd ~/PA1
+    % ls
+    descriptions.txt            findYourOutput.exe  PA1assignment.txt
+    expectedOutput              gradingPolicy.txt   README
+    explanatoryWalkthrough.txt  objects.txt         savedgame
+    %
+
+The explanatoryWalkthrough.txt file explains how to play the dunnet game,
+particularly the part that we will be implementing in this homework. Read this
+walkthrough file next, after you finish reading this README file.
+
+The savedgame file is used by the dunnet game, in order to load up the part
+of the game that we'll be implementing. The explanatoryWalkthrough.txt file
+describes how to use this savedgame file.
+
+The PA1assignment.txt file describes the details of this first homework. You
+will want to read that file after you finish reading the walkthrough.
+
+The descriptions.txt and objects.txt files contain the text that you will be
+placing into various files that you need to create in this first homework. How
+you are to do this is discussed in the PA1assignment.txt file.
+
+The gradingPolicy.txt file explains the strict rules that will be employed
+in grading the homework. Most important is to know the stiff penalties for
+cheating. The course name is "UNIX System Programming"; therefore, it has the
+word "programming" in the title. This means that programming is a crucial part
+of the course. Your assignments will, in fact be worth 42% of your final grade.
+It is therefore a very serious matter to cheat on the homework. So don't cheat.
+Also, read the grading policy and know what is allowed and disallowed.
+
+The gradingPolicy.txt file also describes the strict rules involving partial
+credit. Each assignment will have a basic standard of performance. If your
+submitted file does not match the basic standard, then it will receive a 0.
+This strict rule is necessary to allow the grading to be able to be completed
+in reasonable time (and to leave the grader enough time to look for cheating).
+It explains how to use the findYourOutput.exe file to see if you match the
+basic standard.
+
+The findYourOutput.exe file is not meant to be read. It is used to create a
+listing of your output, which can be compared to the expectedOutput file.
+
+The expectedOutput file is the basic standard of performance that is expected
+for the first homework. The PA1assignment.txt file will explain how you can
+check your answer against the expected output. If you view this file you will
+see that it lists every file and directory that you will create. This listing
+has a nice feature, that each individual directory appears in one place. What
+do I mean? Well consider the receivingRoom, it has an axe and a shovel (among
+other things). It also has a door to the east. the find command alphabetizes
+these things, so "axe" comes before "e" which comes before "shovel". This is
+not the best ordering, because it means the axe and shovel do not appear near
+each other when you type: find . -name "*".  But they do appear near each
+other in the expectedOutput file. (And in the output of findYourOutput.txt.)
+
+Now that you've finished reading this file, the next step is to proceed on to
+reading the explanatoryWalkthrough.txt file, then the PA1assignment.txt file,
+then the gradingPolicy.txt file...
