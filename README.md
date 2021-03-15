@@ -1,4 +1,4 @@
-# CSE365: Unix System Programming
+# CSE365 Unix System Programming
 #### Spring 2021
 #### National Sun Yat-sen University
 
